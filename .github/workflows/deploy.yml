@@ -8,11 +8,10 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Deploy to EC2
-
-        uses: appleboy/ssh-action@master
-
+        uses: appleboy/ssh-action@v1.0.3
 
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -20,9 +19,14 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
 
           script: |
-            cd ~/projects/backend
+            export NVM_DIR="$HOME/.nvm"
+            source "$NVM_DIR/nvm.sh"
 
+            cd ~/server/tt_app_be/tt_app_be
+
+            git checkout feat/prod
             git pull origin feat/prod
 
             npm install
+
             pm2 restart backend
